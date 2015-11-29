@@ -6,22 +6,23 @@ type Comparable interface {
 }
 
 type Node struct {
+  parent *Node
   left *Node
   right *Node
   key Comparable
   value interface{}
 }
 
-func NewNode() *Node {
-  return &Node{ left: nil, right: nil }
+func NewNode(parent *Node) *Node {
+  return &Node{ parent: parent, left: nil, right: nil }
 }
 
-func NewNodeKeyValue(key Comparable, value interface{}) *Node {
-  return &Node{ left: nil, right: nil, key: key, value: value }
+func NewNodeKeyValue(parent *Node, key Comparable, value interface{}) *Node {
+  return &Node{ parent: parent, left: nil, right: nil, key: key, value: value }
 }
 
 func (me *Node) Copy() *Node {
-  newNode := NewNodeKeyValue(me.key, me.value)
+  newNode := NewNodeKeyValue(me, me.key, me.value)
   if me.left != nil { newNode.left = me.left.Copy() } 
   if me.right != nil { newNode.right = me.right.Copy() }
   return newNode 
@@ -45,12 +46,14 @@ func (me *Node) Add(node *Node) *Node {
     if node.key.LessThan(current.key) {
       if current.left == nil {
         current.left = node
+        node.parent = current
         return node
       }
       current = current.left
     } else {
       if current.right == nil {
         current.right = node
+        node.parent = current
         return node
       }
       current = current.right
@@ -71,6 +74,7 @@ func (me *Node) Remove(key Comparable) *Node {
     oldMe := me
     me = me.left
     oldMe.left = nil
+    me.parent = oldMe.parent
     if oldMe.right!=nil { me.Add(oldMe.right) }
     oldMe.right = nil
   } else {
@@ -90,19 +94,6 @@ func (me *Node) Remove(key Comparable) *Node {
 }
 
 func (me *Node) NextGreaterThan(key Comparable) *Node {
-  var last *Node = me
-  for me!=nil {
-    if key.Equal(me.key) { 
-      if me.right!=nil { return me.right.leftmost()}
-      return last
-    }
-    last = me
-    if key.LessThan(me.key) {
-      me = me.left
-    } else {
-      me = me.right
-    }
-  }
   return nil
 }
 
@@ -117,12 +108,14 @@ func (me *Node) Balance() *Node {
       oldMe := me
       me = me.right
       oldMe.right = nil
+      me.parent = oldMe.parent
       me.Add(oldMe)
       steps--
     } else {
       oldMe := me
       me = me.left
       oldMe.left = nil
+      me.parent = oldMe.parent
       me.Add(oldMe)
       steps++
     }

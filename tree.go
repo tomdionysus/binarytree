@@ -10,11 +10,11 @@ func NewTree() *Tree {
 
 func (me *Tree) Set(key Comparable, value interface{}) {
   if me.root == nil {
-    me.root = NewNodeKeyValue(key, value)
+    me.root = NewNodeKeyValue(nil, key, value)
   } else {
     node := me.root.Find(key)
     if node == nil {
-      me.root.Add(NewNodeKeyValue(key, value))
+      me.root.Add(NewNodeKeyValue(nil, key, value))
     } else {
       node.value = value
     }
