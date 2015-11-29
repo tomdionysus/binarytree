@@ -40,6 +40,21 @@ func (me *Node) Find(key Comparable) *Node {
   return nil
 }
 
+func (me *Node) FindNearest(key Comparable) (*Node, bool) {
+  last := me
+  for me!=nil {
+    if key.Equal(me.key) { return me, true }
+    if key.LessThan(me.key) {
+      last = me
+      me = me.left
+    } else {
+      last = me
+      me = me.right
+    }
+  }
+  return last, false
+}
+
 func (me *Node) Add(node *Node) *Node {
   current := me
   for {
@@ -76,6 +91,8 @@ func (me *Node) Remove(key Comparable) *Node {
     oldMe.left = nil
     me.parent = oldMe.parent
     if oldMe.right!=nil { me.Add(oldMe.right) }
+    oldMe.parent = nil
+    oldMe.left = nil
     oldMe.right = nil
   } else {
     // Walk the tree recursively calling Remove, set
@@ -98,6 +115,27 @@ func (me *Node) NextGreaterThan(key Comparable) *Node {
 }
 
 func (me *Node) NextLessThan(key Comparable) *Node {
+  return nil
+}
+
+func (me *Node) Next() *Node {
+  var closest, test *Node = nil,nil
+  if me.right!=nil {
+    test := me.right.leftmost()
+    if closest==nil || test.key.LessThan(closest.key) {
+      closest = test
+    }
+  }
+  if me.parent!=nil {
+    if closest==nil || test.key.LessThan(me.parent.key) {
+      closest = me.parent
+    }
+  }
+
+  return closest
+}
+
+func (me *Node) Previous() *Node {
   return nil
 }
 

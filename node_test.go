@@ -16,31 +16,36 @@ func (me TestKey) Equal(other Comparable) bool {
 } 
 
 func TestNewNode(t *testing.T) {
-  x := NewNode(nil)
+  p := &Node{}
+  x := NewNode(p)
 
-  assert.Nil(t, x.parent)
+  assert.Equal(t, x.parent, p)
   assert.Nil(t, x.left)
   assert.Nil(t, x.right)
 }
 
 func TestNewNodeKeyValue(t *testing.T) {
-  x := NewNodeKeyValue(nil, TestKey(2),"Help!")
+  p := &Node{}
+  x := NewNodeKeyValue(p, TestKey(2),"Help!")
 
+  assert.Equal(t, x.parent, p)
   assert.Equal(t, x.key, TestKey(2))
   assert.Equal(t, x.value, "Help!")
 }
 
-func TestNodeFind(t *testing.T) {
-  root := getTestTree()
+func TestFind(t *testing.T) {
+  root := getTestTreeBalanced()
 
-  assert.Equal(t, root.Find(TestKey(2)), root.left.left)
-  assert.Equal(t, root.Find(TestKey(12)), root.right.left)
-  assert.Equal(t, root.Find(TestKey(5)), root.left)
-  assert.Equal(t, root.Find(TestKey(15)), root.right)
-  assert.Equal(t, root.Find(TestKey(10)), root)
+  assert.Equal(t, root.Find(TestKey(4)), root)
+  assert.Equal(t, root.Find(TestKey(6)), root.right)
+  assert.Equal(t, root.Find(TestKey(2)), root.left)
+  assert.Equal(t, root.Find(TestKey(5)), root.right.left)
+  assert.Equal(t, root.Find(TestKey(7)), root.right.right)
+  assert.Equal(t, root.Find(TestKey(1)), root.left.left)
+  assert.Equal(t, root.Find(TestKey(3)), root.left.right)
 
-  assert.Nil(t, root.Find(TestKey(4)))
-  assert.Nil(t, root.Find(TestKey(6)))
+  assert.Nil(t, root.Find(TestKey(9)))
+  assert.Nil(t, root.Find(TestKey(-1)))
 }
 
 
@@ -96,27 +101,30 @@ func TestRemove(t *testing.T) {
 }
 
 func TestBalance(t *testing.T) {
-  root := NewNodeKeyValue(nil, TestKey(1),"one")
-  root.Add(NewNodeKeyValue(nil, TestKey(2),"two"))
-  root.Add(NewNodeKeyValue(nil, TestKey(3),"three"))
-  root.Add(NewNodeKeyValue(nil, TestKey(4),"four"))
-  root.Add(NewNodeKeyValue(nil, TestKey(5),"five"))
-  root.Add(NewNodeKeyValue(nil, TestKey(6),"six"))
-  root.Add(NewNodeKeyValue(nil, TestKey(7),"seven"))
-
-  assert.Equal(t, 6, root.countRight())
-  assert.Equal(t, 0, root.countLeft())
-
+  root := getTestTreeRightUnbalanced()
   root = root.Balance()
 
-  assert.Equal(t, 2, root.countRight())
-  assert.Equal(t, 2, root.countLeft())
+  assert.Equal(t, TestKey(4), root.key)
+  assert.Equal(t, TestKey(2), root.left.key)
+  assert.Equal(t, TestKey(6), root.right.key)
+  assert.Equal(t, TestKey(1), root.left.left.key)
+  assert.Equal(t, TestKey(3), root.left.right.key)
+  assert.Equal(t, TestKey(5), root.right.left.key)
+  assert.Equal(t, TestKey(7), root.right.right.key)
 
-  assert.Equal(t, 1, root.left.countRight())
-  assert.Equal(t, 1, root.left.countLeft())
+  root = getTestTreeLeftUnbalanced()
+  root = root.Balance()
 
-  assert.Equal(t, 1, root.right.countRight())
-  assert.Equal(t, 1, root.right.countLeft())
+  assert.Equal(t, TestKey(4), root.key)
+  assert.Equal(t, TestKey(2), root.left.key)
+  assert.Equal(t, TestKey(6), root.right.key)
+  assert.Equal(t, TestKey(1), root.left.left.key)
+  assert.Equal(t, TestKey(3), root.left.right.key)
+  assert.Equal(t, TestKey(5), root.right.left.key)
+  assert.Equal(t, TestKey(7), root.right.right.key)
+
+  root = getTestTreeBalanced()
+  root = root.Balance()
 
   assert.Equal(t, TestKey(4), root.key)
   assert.Equal(t, TestKey(2), root.left.key)
@@ -127,45 +135,77 @@ func TestBalance(t *testing.T) {
   assert.Equal(t, TestKey(7), root.right.right.key)
 }
 
-func Testleftmost(t *testing.T) {
-  root := getTestTree()
+// Internals
 
-  assert.Equal(t, root.leftmost().key, TestKey(2))
+func Testleftmost(t *testing.T) {
+  root := getTestTreeBalanced()
+  assert.Equal(t, root.rightmost().key, TestKey(1))
+
+  root = getTestTreeLeftUnbalanced()
+  assert.Equal(t, root.rightmost().key, TestKey(1))
+
+  root = getTestTreeRightUnbalanced()
+  assert.Equal(t, root.rightmost().key, TestKey(1))
 }
 
 func Testrightmost(t *testing.T) {
-  root := getTestTree()
+  root := getTestTreeBalanced()
+  assert.Equal(t, root.rightmost().key, TestKey(7))
 
-  assert.Equal(t, root.rightmost().key, TestKey(17))
+  root = getTestTreeLeftUnbalanced()
+  assert.Equal(t, root.rightmost().key, TestKey(7))
+
+  root = getTestTreeRightUnbalanced()
+  assert.Equal(t, root.rightmost().key, TestKey(7))
 }
 
-func TestNextGreaterThan(t *testing.T) {
-  root := getTestTree()
+func TestcountLeft(t *testing.T) {
+  root := getTestTreeRightUnbalanced()
+  assert.Equal(t, 0, root.countLeft())
 
-  assert.Equal(t, root.NextGreaterThan(TestKey(2)).key, TestKey(5))
-  assert.Equal(t, root.NextGreaterThan(TestKey(12)).key, TestKey(15))
-  assert.Nil(t, root.NextGreaterThan(TestKey(17)))
+  root = getTestTreeLeftUnbalanced()
+  assert.Equal(t, 6, root.countLeft())
 
-  root = NewNodeKeyValue(nil, TestKey(7),"seven")
+  root = getTestTreeBalanced()
+  assert.Equal(t, 2, root.countLeft())
+}
+
+func TestcountRight(t *testing.T) {
+  root := getTestTreeRightUnbalanced()
+  assert.Equal(t, 6, root.countRight())
+
+  root = getTestTreeLeftUnbalanced()
+  assert.Equal(t, 0, root.countRight())
+
+  root = getTestTreeBalanced()
+  assert.Equal(t, 2, root.countRight())
+}
+
+// Helpers
+
+func getTestTreeRightUnbalanced() *Node {
+  root := NewNodeKeyValue(nil, TestKey(1),"one")
+  root.Add(NewNodeKeyValue(nil, TestKey(2),"two"))
+  root.Add(NewNodeKeyValue(nil, TestKey(3),"three"))
+  root.Add(NewNodeKeyValue(nil, TestKey(4),"four"))
+  root.Add(NewNodeKeyValue(nil, TestKey(5),"five"))
+  root.Add(NewNodeKeyValue(nil, TestKey(6),"six"))
+  root.Add(NewNodeKeyValue(nil, TestKey(7),"seven"))
+  return root
+}
+
+func getTestTreeLeftUnbalanced() *Node {
+  root := NewNodeKeyValue(nil, TestKey(7),"seven")
   root.Add(NewNodeKeyValue(nil, TestKey(6),"six"))
   root.Add(NewNodeKeyValue(nil, TestKey(5),"five"))
   root.Add(NewNodeKeyValue(nil, TestKey(4),"four"))
   root.Add(NewNodeKeyValue(nil, TestKey(3),"three"))
   root.Add(NewNodeKeyValue(nil, TestKey(2),"two"))
   root.Add(NewNodeKeyValue(nil, TestKey(1),"one"))
-
-  assert.Equal(t, root.NextGreaterThan(TestKey(4)).key, TestKey(5))
-  assert.Equal(t, root.NextGreaterThan(TestKey(1)).key, TestKey(2))
+  return root
 }
 
-
-func getTestTree() *Node {
-  root := NewNodeKeyValue(nil, TestKey(10), "ten")
-  root.left = NewNodeKeyValue(root, TestKey(5), "five")
-  root.right = NewNodeKeyValue(root, TestKey(15), "fifteen")
-  root.left.left = NewNodeKeyValue(root.left, TestKey(2), "two")
-  root.left.right = NewNodeKeyValue(root.left, TestKey(7), "seven")
-  root.right.left = NewNodeKeyValue(root.right, TestKey(12), "twelve")
-  root.right.right = NewNodeKeyValue(root.right, TestKey(17), "seventeen")
-  return root
+func getTestTreeBalanced() *Node {
+  root := getTestTreeLeftUnbalanced()
+  return root.Balance()
 }
