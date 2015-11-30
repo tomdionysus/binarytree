@@ -1,3 +1,5 @@
 # binarytree
 
-A binary tree implementation in golang
+[![Build Status](https://travis-ci.org/tomdionysus/binarytree.svg?branch=master)](https://travis-ci.org/tomdionysus/binarytree)
+
+A binary tree implementation in golang. This package is intended for use when more low level control is required over an internal map-like datastructure.
