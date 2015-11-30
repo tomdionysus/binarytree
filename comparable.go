@@ -49,29 +49,29 @@ func (me StringKey) GreaterThan(other Comparable) bool {
 // StringKey is a type of base type String that implements the Comparable interface.
 type ByteSliceKey []byte
 
-// Return true if this key is less than the supplied StringKey.
-func (me StringKey) LessThan(other Comparable) bool {
-  if len(me) < len(other) { return true }
+// Return true if this key is less than the supplied ByteSliceKey.
+func (me ByteSliceKey) LessThan(other Comparable) bool {
+  if len(me) < len(other.(ByteSliceKey)) { return true }
   for i, x := range me {
-    if x<other[i] { return true }
+    if x<other.(ByteSliceKey)[i] { return true }
   }
   return false
 } 
 
-// Return true if this key is equal to the supplied StringKey.
-func (me StringKey) EqualTo(other Comparable) bool {
-  if len(me) != len(other) { return false }
+// Return true if this key is equal to the supplied ByteSliceKey.
+func (me ByteSliceKey) EqualTo(other Comparable) bool {
+  if len(me) != len(other.(ByteSliceKey)) { return false }
   for i, x := range me {
-    if x!=other[i] { return false }
+    if x!=other.(ByteSliceKey)[i] { return false }
   }
   return true
 } 
 
-// Return true if this key is greater than the supplied StringKey.
-func (me StringKey) GreaterThan(other Comparable) bool {
-  if len(me) > len(other) { return true } 
+// Return true if this key is greater than the supplied ByteSliceKey.
+func (me ByteSliceKey) GreaterThan(other Comparable) bool {
+  if len(me) > len(other.(ByteSliceKey)) { return true } 
   for i, x := range me {
-    if x>other[i] { return true }
+    if x>other.(ByteSliceKey)[i] { return true }
   }
   return false
 } 
