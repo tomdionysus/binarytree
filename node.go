@@ -124,7 +124,7 @@ func (me *Node) Remove(key Comparable) *Node {
 
 // Balance this node's subtree, returning the new root node.
 func (me *Node) Balance() *Node {
-  steps := (me.countRight() - me.countLeft())/2
+  var steps int = (me.countRight() - me.countLeft())/2
   for steps != 0 {
     if steps > 0 {
       oldMe := me

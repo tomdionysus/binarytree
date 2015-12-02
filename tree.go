@@ -28,7 +28,10 @@ func (me *Tree) Set(key Comparable, value interface{}) {
 // (false, nil) if not.
 func (me *Tree) Get(key Comparable) (bool, interface{}) {
   node := me.GetNode(key)
-  return node != nil, node
+  if node == nil {
+    return false, nil
+  }
+  return true, node.value
 }
 
 // Get the node associated with the supplied key, or nil if not found
