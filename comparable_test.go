@@ -99,8 +99,11 @@ func TestStringKeyGreaterThan(t *testing.T) {
 }
 
 func TestByteSliceKeyLessThan(t *testing.T) {
-  a := ByteSliceKey{ 0x00,0x00,0x00 }
-  b := ByteSliceKey{ 0x00,0x00,0x01 }
+  a := ByteSliceKey{ 0x00, 0x00, 0x00 }
+  b := ByteSliceKey{ 0x00, 0x00, 0x01 }
+  
+  x := ByteSliceKey{ 0x00, 0x20, 0x00 }
+  y := ByteSliceKey{ 0x30, 0x20, 0x00 }
 
   c := ByteSliceKey{ 0xAA,0xEE,0xFF,0xFF }
   d := ByteSliceKey{ 0xAA,0xEE }
@@ -110,6 +113,12 @@ func TestByteSliceKeyLessThan(t *testing.T) {
 
   assert.True(t, a.LessThan(c))
   assert.False(t, c.LessThan(a))
+
+  assert.True(t, b.LessThan(x))
+  assert.False(t, x.LessThan(b))
+
+  assert.True(t, x.LessThan(y))
+  assert.False(t, y.LessThan(x))
 
   assert.True(t, d.LessThan(a))
   assert.False(t, a.LessThan(d))

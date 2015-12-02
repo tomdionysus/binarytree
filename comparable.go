@@ -62,10 +62,13 @@ type ByteSliceKey []byte
 func (me ByteSliceKey) LessThan(other Comparable) bool {
   if len(me) > len(other.(ByteSliceKey)) { return false }
   if len(me) < len(other.(ByteSliceKey)) { return true }
+
+  ot := other.(ByteSliceKey)
   for i, x := range me {
-    if x > other.(ByteSliceKey)[i] { return false }
+    if x < ot[i] { return true }
+    if x > ot[i] { return false }
   }
-  return !me.EqualTo(other)
+  return false
 } 
 
 // Return true if this key is equal to the supplied ByteSliceKey.
@@ -79,12 +82,7 @@ func (me ByteSliceKey) EqualTo(other Comparable) bool {
 
 // Return true if this key is greater than the supplied ByteSliceKey.
 func (me ByteSliceKey) GreaterThan(other Comparable) bool {
-  if len(me) > len(other.(ByteSliceKey)) { return true } 
-  if len(me) < len(other.(ByteSliceKey)) { return false }
-  for i, x := range me {
-    if x < other.(ByteSliceKey)[i] { return false }
-  }
-  return !me.EqualTo(other)
+  return !(me.EqualTo(other) || me.LessThan(other))
 } 
 
 func (me ByteSliceKey) ValueOf() interface{} {
