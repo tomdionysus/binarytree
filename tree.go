@@ -72,3 +72,16 @@ func (me *Tree) NextGreaterThan(key Comparable) (bool, interface{}) {
   return true, node.value
 }
 
+// Return the first (lowest) key and value in the tree, or nil, nil if the tree is empty.
+func (me *Tree) First() (Comparable, interface{}) {
+   if me.root == nil { return nil, nil }
+   node := me.root.leftmost()
+   return node.key, node.value
+}
+
+// Return the last (highest) key and value in the tree, or nil, nil if the tree is empty.
+func (me *Tree) Last() (Comparable, interface{}) {
+   if me.root == nil { return nil, nil }
+   node := me.root.rightmost()
+   return node.key, node.value
+}
