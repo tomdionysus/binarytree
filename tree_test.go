@@ -39,3 +39,21 @@ func TestGet(t *testing.T) {
   assert.False(t, found)
   assert.Nil(t, x)
 }
+
+func TestWalk(t *testing.T) {
+  tree := NewTree()
+
+  tree.Set(StringKey("one"),1)
+  tree.Set(StringKey("two"),2)
+
+  outkeys := []string{}
+  outvalues := []int{}
+
+  tree.Walk(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(string))
+    outvalues = append(outvalues, value.(int))
+  }, true)
+
+  assert.Equal(t, outkeys, []string{"one","two"})
+  assert.Equal(t, outvalues, []int{1,2})
+}

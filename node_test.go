@@ -220,6 +220,47 @@ func TestcountRight(t *testing.T) {
   assert.Equal(t, 2, root.countRight())
 }
 
+func TestWalkForward(t *testing.T) {
+  root := getTestTreeBalanced(1)
+
+  out := []string{}
+
+  root.WalkForward(func(me *Node) {
+    out = append(out,me.value.(string))
+  })
+
+  assert.Equal(t, out, []string{
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+  })
+}
+
+func TestWalkBackward(t *testing.T) {
+  root := getTestTreeBalanced(1)
+
+  out := []string{}
+
+  root.WalkBackward(func(me *Node) {
+    out = append(out,me.value.(string))
+  })
+
+  assert.Equal(t, out, []string{
+    "seven",
+    "six",
+    "five",
+    "four",
+    "three",
+    "two",
+    "one",
+  })
+}
+
+
 // Helpers
 
 func getTestTreeRightUnbalanced(factor int) *Node {

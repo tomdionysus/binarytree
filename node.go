@@ -145,6 +145,20 @@ func (me *Node) Balance() *Node {
   return me
 }
 
+// Call iterator for each node in this node's subtree in order, low to high
+func (me *Node) WalkForward(iterator func(me *Node)) {
+  if me.left!=nil { me.left.WalkForward(iterator) }
+  iterator(me)
+  if me.right!=nil { me.right.WalkForward(iterator) }
+}
+
+// Call iterator for each node in this node's subtree in reverse order, high to low
+func (me *Node) WalkBackward(iterator func(me *Node)) {
+  if me.right!=nil { me.right.WalkBackward(iterator) }
+  iterator(me)
+  if me.left!=nil { me.left.WalkBackward(iterator) }
+}
+
 // Return the left-most (smallest key) node in this node's subtree
 func (me *Node) leftmost() *Node {
   for {

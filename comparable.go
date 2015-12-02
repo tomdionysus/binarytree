@@ -8,6 +8,7 @@ type Comparable interface {
   LessThan(Comparable) bool
   EqualTo(Comparable) bool
   GreaterThan(Comparable) bool
+  ValueOf() interface{}
 }
 
 // IntKey is a type of base type int that implements the Comparable interface.
@@ -28,6 +29,10 @@ func (me IntKey) GreaterThan(other Comparable) bool {
   return me > other.(IntKey)
 } 
 
+func (me IntKey) ValueOf() interface{} {
+  return int(me)
+}
+
 // StringKey is a type of base type String that implements the Comparable interface.
 type StringKey string
 
@@ -45,6 +50,10 @@ func (me StringKey) EqualTo(other Comparable) bool {
 func (me StringKey) GreaterThan(other Comparable) bool {
   return me > other.(StringKey)
 } 
+
+func (me StringKey) ValueOf() interface{} {
+  return string(me)
+}
 
 // StringKey is a type of base type String that implements the Comparable interface.
 type ByteSliceKey []byte
@@ -77,4 +86,8 @@ func (me ByteSliceKey) GreaterThan(other Comparable) bool {
   }
   return !me.EqualTo(other)
 } 
+
+func (me ByteSliceKey) ValueOf() interface{} {
+  return []byte(me)
+}
 

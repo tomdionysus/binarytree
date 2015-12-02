@@ -88,3 +88,15 @@ func (me *Tree) Last() (Comparable, interface{}) {
    node := me.root.rightmost()
    return node.key, node.value
 }
+
+// Iterate the tree with the function in the supplied direction
+func (me *Tree) Walk(iterator func(key Comparable, value interface{}), forward bool) {
+  if me.root == nil { return }
+  if forward {
+    me.root.WalkForward(func(node *Node) { iterator(node.key, node.value)})
+  } else {
+    me.root.WalkBackward(func(node *Node) { iterator(node.key, node.value)})
+  }
+}
+
+
