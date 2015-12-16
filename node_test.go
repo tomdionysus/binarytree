@@ -34,58 +34,109 @@ func TestFind(t *testing.T) {
   assert.Nil(t, root.Find(IntKey(-1)))
 }
 
-func TestNextLessThan(t *testing.T) {
+func TestPrevious(t *testing.T) {
   root := getTestTreeBalanced(1)
-  node := root.NextLessThan(IntKey(1))
+  node := root.Previous(IntKey(1))
   assert.Nil(t, node)
-  node = root.NextLessThan(IntKey(2))
+  node = root.Previous(IntKey(2))
   assert.Equal(t, IntKey(1), node.key)
-  node = root.NextLessThan(IntKey(3))
+  node = root.Previous(IntKey(3))
   assert.Equal(t, IntKey(2), node.key)
-  node = root.NextLessThan(IntKey(20))
+  node = root.Previous(IntKey(20))
   assert.Equal(t, IntKey(7), node.key)
 
   root = getTestTreeLeftUnbalanced(1)
-  node = root.NextLessThan(IntKey(1))
+  node = root.Previous(IntKey(1))
   assert.Nil(t, node)
-  node = root.NextLessThan(IntKey(2))
+  node = root.Previous(IntKey(2))
   assert.Equal(t, IntKey(1), node.key)
-  node = root.NextLessThan(IntKey(3))
+  node = root.Previous(IntKey(3))
   assert.Equal(t, IntKey(2), node.key)
-  node = root.NextLessThan(IntKey(20))
+  node = root.Previous(IntKey(20))
   assert.Equal(t, IntKey(7), node.key)
 
   root = getTestTreeRightUnbalanced(1)
-  node = root.NextLessThan(IntKey(1))
+  node = root.Previous(IntKey(1))
   assert.Nil(t, node)
-  node = root.NextLessThan(IntKey(2))
+  node = root.Previous(IntKey(2))
   assert.Equal(t, IntKey(1), node.key)
-  node = root.NextLessThan(IntKey(3))
+  node = root.Previous(IntKey(3))
   assert.Equal(t, IntKey(2), node.key)
-  node = root.NextLessThan(IntKey(20))
+  node = root.Previous(IntKey(20))
   assert.Equal(t, IntKey(7), node.key)
 
   root = getTestTreeBalanced(2)
-  node = root.NextLessThan(IntKey(1))
+  node = root.Previous(IntKey(1))
   assert.Nil(t, node)
-  node = root.NextLessThan(IntKey(2))
+  node = root.Previous(IntKey(2))
   assert.Nil(t, node)
-  node = root.NextLessThan(IntKey(5))
+  node = root.Previous(IntKey(5))
   assert.Equal(t, IntKey(4), node.key)
-  node = root.NextLessThan(IntKey(20))
+  node = root.Previous(IntKey(20))
   assert.Equal(t, IntKey(14), node.key)
 }
 
-func TestNextGreaterThan(t *testing.T) {
-  root := getTestTreeBalanced(1)
-  node := root.NextGreaterThan(IntKey(7))
-  assert.Nil(t, node)
-  node = root.NextGreaterThan(IntKey(6))
-  assert.Equal(t, IntKey(7), node.key)
-  node = root.NextGreaterThan(IntKey(4))
-  assert.Equal(t, IntKey(5), node.key)
-  node = root.NextGreaterThan(IntKey(1))
-  assert.Equal(t, IntKey(2), node.key)
+func TestNext(t *testing.T) {
+  // Left Unbalanced
+  root := getTestTreeLeftUnbalanced(1)
+  node := root.Next(IntKey(0))
+  assert.Equal(t, IntKey(1), node.key)
+
+  for i:=0; i<6; i++ {
+    node = root.Next(IntKey(i))
+    assert.NotNil(t, node)
+    if node!=nil { assert.Equal(t, IntKey(i+1), node.key) }
+  }
+  assert.Nil(t, root.Next(IntKey(7)))
+
+  // Right Unbalanced
+  root = getTestTreeRightUnbalanced(1)
+  node = root.Next(IntKey(0))
+  assert.Equal(t, IntKey(1), node.key)
+
+  for i:=0; i<6; i++ {
+    node = root.Next(IntKey(i))
+    assert.NotNil(t, node)
+    if node!=nil { assert.Equal(t, IntKey(i+1), node.key) }
+  }
+  assert.Nil(t, root.Next(IntKey(7)))
+
+  // Balanced
+  root = getTestTreeBalanced(1)
+  assert.Equal(t, IntKey(1), root.Next(IntKey(0)).key)
+  assert.Equal(t, IntKey(2), root.Next(IntKey(1)).key)
+  assert.Equal(t, IntKey(3), root.Next(IntKey(2)).key)
+  assert.Equal(t, IntKey(4), root.Next(IntKey(3)).key)
+  assert.Equal(t, IntKey(5), root.Next(IntKey(4)).key)
+  assert.Equal(t, IntKey(6), root.Next(IntKey(5)).key)
+  assert.Equal(t, IntKey(7), root.Next(IntKey(6)).key)
+  assert.Nil(t, root.Next(IntKey(7)))
+
+  // Left Unbalanced Scaled (3)
+  root = getTestTreeLeftUnbalanced(3)
+  node = root.Next(IntKey(0))
+  assert.Equal(t, IntKey(3), node.key)
+
+  for i:=0; i<21; i++ {
+    node = root.Next(IntKey(i))
+    assert.NotNil(t, node)
+    if node!=nil { assert.Equal(t, IntKey(((i/3)+1)*3), node.key) }
+  }
+  assert.Nil(t, root.Next(IntKey(21)))
+
+  // Right Unbalanced Scaled (3)
+  root = getTestTreeRightUnbalanced(3)
+  node = root.Next(IntKey(0))
+  assert.Equal(t, IntKey(3), node.key)
+
+  for i:=0; i<21; i++ {
+    node = root.Next(IntKey(i))
+    assert.NotNil(t, node)
+    if node!=nil { assert.Equal(t, IntKey(((i/3)+1)*3), node.key) }
+  }
+  assert.Nil(t, root.Next(IntKey(21)))
+
+
 }
 
 func TestNodeAdd(t *testing.T) {

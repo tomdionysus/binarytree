@@ -39,34 +39,68 @@ func (me *Node) Find(key Comparable) *Node {
   return nil
 }
 
-// Find and return the node with the largest key smaller than the supplied key, i.e.
-// the next smallest node. If there is no smaller node, return nil.
-//
-// BUG(inefficient): This is seriously inefficient, it walks the tree until it finds a node smaller than the key.
-func (me *Node) NextLessThan(key Comparable) *Node {
-  return me.nextLessThan(key, nil)
+// Find and return the nearest node to the supplied key and its path to root.
+// 1. If the node is found and it is the root node, return: node, []
+// 2. If the node is found and it is not the root node, return: node, [node..., root]
+// 2. If the node is not found, return: nearestNode, [node..., root]
+func (me *Node) FindNearest(key Comparable) (*Node, []*Node) {
+  stack := []*Node{}
+  for {
+    if me.key.EqualTo(key) { return me, stack }
+    if key.LessThan(me.key) {
+      if me.left == nil { return me, stack }
+      stack = append(stack, me) 
+      me = me.left
+    } else {
+      if me.right == nil { return me, stack }
+      stack = append(stack, me)
+      me = me.right
+    }
+  }
 }
 
-func (me *Node) nextLessThan(key Comparable, best *Node) *Node {
-  if me.right != nil { best = me.right.nextLessThan(key, best); if best!=nil { return best } }
-  if me.key.LessThan(key) { return me }
-  if me.left != nil { best = me.left.nextLessThan(key, best); if best!=nil { return best } }
-  return best
+// Find and return the node with the largest key smaller than the supplied key, i.e.
+// the next smallest node. If there is no smaller node, return nil.
+func (me *Node) Previous(key Comparable) *Node {
+  node, stack := me.FindNearest(key)
+  if !node.key.EqualTo(key) {
+    if node.key.LessThan(key) { return node }
+    if len(stack) == 0 { return nil }
+    for i:=len(stack)-1; i>=0; i-- {
+      if stack[i].key.LessThan(key) { return stack[i] }
+    }
+    return nil
+  }
+  if node.left == nil {
+    if len(stack) == 0 { return nil }
+    for i:=len(stack)-1; i>=0; i-- {
+      if stack[i].key.LessThan(key) { return stack[i] }
+    }
+    return nil
+  }
+  return node.left.rightmost()
 }
 
 // Find and return the node with the smallest key larger than the supplied key, i.e.
 // the next largest node. If there is no larger node, return nil.
-//
-// BUG(inefficient): This is seriously inefficient, it walks the tree until it finds a node larger than the key.
-func (me *Node) NextGreaterThan(key Comparable) *Node {
-  return me.nextGreaterThan(key, nil)
-}
-
-func (me *Node) nextGreaterThan(key Comparable, best *Node) *Node {
-  if me.left != nil { best = me.left.nextGreaterThan(key, best); if best!=nil { return best } }
-  if me.key.GreaterThan(key) { return me }
-  if me.right != nil { best = me.right.nextGreaterThan(key, best); if best!=nil { return best } }
-  return best
+func (me *Node) Next(key Comparable) *Node {
+  node, stack := me.FindNearest(key)
+  if !node.key.EqualTo(key) {
+    if node.key.GreaterThan(key) { return node }
+    if len(stack) == 0 { return nil }
+    for i:=len(stack)-1; i>=0; i-- {
+      if stack[i].key.GreaterThan(key) { return stack[i] }
+    }
+    return nil
+  }
+  if node.right == nil {
+    if len(stack) == 0 { return nil }
+    for i:=len(stack)-1; i>=0; i-- {
+      if stack[i].key.GreaterThan(key) { return stack[i] }
+    }
+    return nil
+  }
+  return node.right.leftmost()
 }
 
 // Add an existing node to this node's subtree

@@ -59,18 +59,18 @@ func (me *Tree) Balance() {
 
 // Return the value associated with the next smallest key than the supplied key.
 // If a smaller key exists, return (true, value), otherwise return (false, nil).
-func (me *Tree) NextLessThan(key Comparable) (bool, interface{}) {
+func (me *Tree) Previous(key Comparable) (bool, interface{}) {
   if me.root == nil { return false, nil }
-  node := me.root.NextLessThan(key)
+  node := me.root.Previous(key)
   if node == nil { return false, nil }
   return true, node.value
 }
 
 // Return the value associated with the next largest key than the supplied key.
 // If a larger key exists, return (true, value), otherwise return (false, nil).
-func (me *Tree) NextGreaterThan(key Comparable) (bool, interface{}) {
+func (me *Tree) Next(key Comparable) (bool, interface{}) {
   if me.root == nil { return false, nil }
-  node := me.root.NextGreaterThan(key)
+  node := me.root.Next(key)
   if node == nil { return false, nil }
   return true, node.value
 }
