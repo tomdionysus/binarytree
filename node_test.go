@@ -227,26 +227,26 @@ func TestBalance(t *testing.T) {
 
 // Internals
 
-func Testleftmost(t *testing.T) {
+func TestMinimum(t *testing.T) {
   root := getTestTreeBalanced(1)
-  assert.Equal(t, root.Rightmost().Key, IntKey(1))
+  assert.Equal(t, root.Minimum().Key, IntKey(1))
 
   root = getTestTreeLeftUnbalanced(1)
-  assert.Equal(t, root.Rightmost().Key, IntKey(1))
+  assert.Equal(t, root.Minimum().Key, IntKey(1))
 
   root = getTestTreeRightUnbalanced(1)
-  assert.Equal(t, root.Rightmost().Key, IntKey(1))
+  assert.Equal(t, root.Minimum().Key, IntKey(1))
 }
 
-func Testrightmost(t *testing.T) {
+func TestMaximum(t *testing.T) {
   root := getTestTreeBalanced(1)
-  assert.Equal(t, root.Rightmost().Key, IntKey(7))
+  assert.Equal(t, root.Maximum().Key, IntKey(7))
 
   root = getTestTreeLeftUnbalanced(1)
-  assert.Equal(t, root.Rightmost().Key, IntKey(7))
+  assert.Equal(t, root.Maximum().Key, IntKey(7))
 
   root = getTestTreeRightUnbalanced(1)
-  assert.Equal(t, root.Rightmost().Key, IntKey(7))
+  assert.Equal(t, root.Maximum().Key, IntKey(7))
 }
 
 func TestDepthLeft(t *testing.T) {

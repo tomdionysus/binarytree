@@ -78,7 +78,7 @@ func (me *Node) Previous(key Comparable) *Node {
     }
     return nil
   }
-  return node.Left.Rightmost()
+  return node.Left.Maximum()
 }
 
 // Find and return the node with the smallest key larger than the supplied key, i.e.
@@ -100,7 +100,7 @@ func (me *Node) Next(key Comparable) *Node {
     }
     return nil
   }
-  return node.Right.Leftmost()
+  return node.Right.Minimum()
 }
 
 // Add an existing node to this node's subtree
@@ -212,7 +212,7 @@ func (me *Node) WalkRangeBackward(iterator func(me *Node), from Comparable, to C
 }
 
 // Return the left-most (smallest key) node in this node's subtree
-func (me *Node) Leftmost() *Node {
+func (me *Node) Minimum() *Node {
   for {
     if me.Left == nil { return me }
     me = me.Left
@@ -220,7 +220,7 @@ func (me *Node) Leftmost() *Node {
 }
 
 // Return the right-most (largest key) node in this node's subtree
-func (me *Node) Rightmost() *Node {
+func (me *Node) Maximum() *Node {
   for {
     if me.Right == nil { return me }
     me = me.Right

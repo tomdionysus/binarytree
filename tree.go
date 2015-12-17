@@ -87,14 +87,14 @@ func (me *Tree) Next(key Comparable) (bool, interface{}) {
 // Return the first (lowest) key and value in the tree, or nil, nil if the tree is empty.
 func (me *Tree) First() (Comparable, interface{}) {
    if me.root == nil { return nil, nil }
-   node := me.root.Leftmost()
+   node := me.root.Minimum()
    return node.Key, node.Value
 }
 
 // Return the last (highest) key and value in the tree, or nil, nil if the tree is empty.
 func (me *Tree) Last() (Comparable, interface{}) {
    if me.root == nil { return nil, nil }
-   node := me.root.Rightmost()
+   node := me.root.Maximum()
    return node.Key, node.Value
 }
 
