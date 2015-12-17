@@ -135,9 +135,9 @@ func TestNext(t *testing.T) {
     if node!=nil { assert.Equal(t, IntKey(((i/3)+1)*3), node.key) }
   }
   assert.Nil(t, root.Next(IntKey(21)))
-
-
 }
+
+
 
 func TestNodeAdd(t *testing.T) {
   x := NewNodeKeyValue(IntKey(5),"five")

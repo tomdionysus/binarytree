@@ -5,6 +5,9 @@ type Tree struct {
   root *Node
 }
 
+// Iterator is a func that can iterate a tree
+type Iterator func(key Comparable, value interface{})
+
 // Return a new empty binary tree
 func NewTree() *Tree {
   return &Tree{ root: nil }
@@ -90,7 +93,7 @@ func (me *Tree) Last() (Comparable, interface{}) {
 }
 
 // Iterate the tree with the function in the supplied direction
-func (me *Tree) Walk(iterator func(key Comparable, value interface{}), forward bool) {
+func (me *Tree) Walk(iterator Iterator, forward bool) {
   if me.root == nil { return }
   if forward {
     me.root.WalkForward(func(node *Node) { iterator(node.key, node.value)})
@@ -99,4 +102,13 @@ func (me *Tree) Walk(iterator func(key Comparable, value interface{}), forward b
   }
 }
 
+// Iterate the tree for all Nodes between the two keys, inclusive
+func (me *Tree) WalkRange(iterator func(key Comparable, value interface{}), from Comparable, to Comparable, forward bool) {
+  if me.root == nil { return }
+  if forward {
+    me.root.WalkRangeForward(func(node *Node) { iterator(node.key, node.value)}, from, to)
+  } else {
+    me.root.WalkRangeBackward(func(node *Node) { iterator(node.key, node.value)}, from, to)
+  }
+}
 
