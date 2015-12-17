@@ -202,9 +202,9 @@ func (me *Node) WalkRangeForward(iterator func(me *Node), from Comparable, to Co
 
 // Call iterator for each node with a key in the range from, to in this node's subtree in reverse order, high to low
 func (me *Node) WalkRangeBackward(iterator func(me *Node), from Comparable, to Comparable) {
-  if me.right!=nil { me.right.WalkRangeForward(iterator, from, to) }
+  if me.right!=nil { me.right.WalkRangeBackward(iterator, from, to) }
   if !me.key.LessThan(from) && !me.key.GreaterThan(to) { iterator(me) }
-  if me.left!=nil { me.left.WalkRangeForward(iterator, from, to) }
+  if me.left!=nil { me.left.WalkRangeBackward(iterator, from, to) }
 }
 
 // Return the left-most (smallest key) node in this node's subtree

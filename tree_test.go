@@ -110,6 +110,38 @@ func TestWalkRange(t *testing.T) {
   assert.Equal(t, outvalues, []string{"two","three","four","five","six"})
 }
 
+func TestWalkRangeBackward(t *testing.T) {
+  tree := NewTree()
+  tree.root = getTestTreeBalanced(1)
+
+  // Test off tree (left) -> 3
+  outkeys := []int{}
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(int))
+  }, IntKey(-5), IntKey(3), false)
+
+  assert.Equal(t, []int{3,2,1}, outkeys)
+
+  // Test 5 -> off tree (right)
+  outkeys = []int{}
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(int))
+  }, IntKey(5), IntKey(10), false)
+
+  assert.Equal(t, outkeys, []int{7,6,5})
+
+  // Test 2 -> 6
+  outkeys = []int{}
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(int))
+  }, IntKey(2), IntKey(6), false)
+
+  assert.Equal(t, outkeys, []int{6,5,4,3,2})
+}
+
 func TestWalkRangeScale(t *testing.T) {
   tree := NewTree()
   tree.root = getTestTreeBalanced(3)
@@ -140,4 +172,36 @@ func TestWalkRangeScale(t *testing.T) {
   }, IntKey(5), IntKey(10), true)
 
   assert.Equal(t, []int{6,9}, outkeys)
+}
+
+func TestWalkRangeBackwardScale(t *testing.T) {
+  tree := NewTree()
+  tree.root = getTestTreeBalanced(3)
+
+  // Test off tree (left) -> 19
+  outkeys := []int{}
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(int))
+  }, IntKey(-5), IntKey(19), false)
+
+  assert.Equal(t, []int{18,15,12,9,6,3}, outkeys)
+
+  // Test 7 -> off tree (right)
+  outkeys = []int{}
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(int))
+  }, IntKey(7), IntKey(22), false)
+
+  assert.Equal(t, []int{21,18,15,12,9}, outkeys)
+
+  // Test 5 -> 10
+  outkeys = []int{}
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    outkeys = append(outkeys, key.ValueOf().(int))
+  }, IntKey(5), IntKey(10), false)
+
+  assert.Equal(t, []int{9,6}, outkeys)
 }
