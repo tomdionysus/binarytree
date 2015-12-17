@@ -22,7 +22,7 @@ func (me *Tree) Set(key Comparable, value interface{}) {
     if node == nil {
       me.root.Add(NewNodeKeyValue(key, value))
     } else {
-      node.value = value
+      node.Value = value
     }
   }
 }
@@ -34,7 +34,7 @@ func (me *Tree) Get(key Comparable) (bool, interface{}) {
   if node == nil {
     return false, nil
   }
-  return true, node.value
+  return true, node.Value
 }
 
 // Clear (Delete) the supplied key
@@ -72,7 +72,7 @@ func (me *Tree) Previous(key Comparable) (bool, interface{}) {
   if me.root == nil { return false, nil }
   node := me.root.Previous(key)
   if node == nil { return false, nil }
-  return true, node.value
+  return true, node.Value
 }
 
 // Return the value associated with the next largest key than the supplied key.
@@ -81,30 +81,30 @@ func (me *Tree) Next(key Comparable) (bool, interface{}) {
   if me.root == nil { return false, nil }
   node := me.root.Next(key)
   if node == nil { return false, nil }
-  return true, node.value
+  return true, node.Value
 }
 
 // Return the first (lowest) key and value in the tree, or nil, nil if the tree is empty.
 func (me *Tree) First() (Comparable, interface{}) {
    if me.root == nil { return nil, nil }
-   node := me.root.leftmost()
-   return node.key, node.value
+   node := me.root.Leftmost()
+   return node.Key, node.Value
 }
 
 // Return the last (highest) key and value in the tree, or nil, nil if the tree is empty.
 func (me *Tree) Last() (Comparable, interface{}) {
    if me.root == nil { return nil, nil }
-   node := me.root.rightmost()
-   return node.key, node.value
+   node := me.root.Rightmost()
+   return node.Key, node.Value
 }
 
 // Iterate the tree with the function in the supplied direction
 func (me *Tree) Walk(iterator Iterator, forward bool) {
   if me.root == nil { return }
   if forward {
-    me.root.WalkForward(func(node *Node) { iterator(node.key, node.value)})
+    me.root.WalkForward(func(node *Node) { iterator(node.Key, node.Value)})
   } else {
-    me.root.WalkBackward(func(node *Node) { iterator(node.key, node.value)})
+    me.root.WalkBackward(func(node *Node) { iterator(node.Key, node.Value)})
   }
 }
 
@@ -112,9 +112,9 @@ func (me *Tree) Walk(iterator Iterator, forward bool) {
 func (me *Tree) WalkRange(iterator func(key Comparable, value interface{}), from Comparable, to Comparable, forward bool) {
   if me.root == nil { return }
   if forward {
-    me.root.WalkRangeForward(func(node *Node) { iterator(node.key, node.value)}, from, to)
+    me.root.WalkRangeForward(func(node *Node) { iterator(node.Key, node.Value)}, from, to)
   } else {
-    me.root.WalkRangeBackward(func(node *Node) { iterator(node.key, node.value)}, from, to)
+    me.root.WalkRangeBackward(func(node *Node) { iterator(node.Key, node.Value)}, from, to)
   }
 }
 

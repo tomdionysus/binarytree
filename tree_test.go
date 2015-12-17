@@ -17,8 +17,8 @@ func TestSet(t *testing.T) {
   tree.Set(StringKey("one"),1)
   tree.Set(StringKey("two"),2)
 
-  assert.Equal(t, tree.root.Find(StringKey("one")).value, 1)
-  assert.Equal(t, tree.root.Find(StringKey("two")).value, 2)
+  assert.Equal(t, tree.root.Find(StringKey("one")).Value, 1)
+  assert.Equal(t, tree.root.Find(StringKey("two")).Value, 2)
 }
 
 func TestGet(t *testing.T) {
