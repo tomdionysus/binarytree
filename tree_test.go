@@ -40,6 +40,38 @@ func TestGet(t *testing.T) {
   assert.Nil(t, x)
 }
 
+func TestClear(t *testing.T) {
+  tree := NewTree()
+
+  tree.Set(StringKey("one"),1)
+  tree.Set(StringKey("two"),2)
+  tree.Set(StringKey("three"),3)
+
+  tree.Clear(StringKey("two"))
+
+  found, x := tree.Get(StringKey("one"))
+  assert.True(t, found)
+  assert.Equal(t, x.(int), 1)
+
+  found, x = tree.Get(StringKey("two"))
+  assert.False(t, found)
+  assert.Nil(t, x)
+
+  found, x = tree.Get(StringKey("three"))
+  assert.True(t, found)
+  assert.Equal(t, x.(int), 3)
+
+  tree = NewTree()
+  tree.Clear(StringKey("two"))
+
+  tree = NewTree()
+  tree.Set(StringKey("two"),2)
+  tree.Clear(StringKey("five"))
+  found, x = tree.Get(StringKey("two"))
+  assert.True(t, found)
+  assert.Equal(t, x.(int), 2)
+}
+
 func TestWalk(t *testing.T) {
   tree := NewTree()
 

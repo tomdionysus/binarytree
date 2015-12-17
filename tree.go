@@ -37,6 +37,12 @@ func (me *Tree) Get(key Comparable) (bool, interface{}) {
   return true, node.value
 }
 
+// Clear (Delete) the supplied key
+func (me *Tree) Clear(key Comparable) {
+  if me.root == nil { return }
+  me.root = me.root.Remove(key)
+}
+
 // Get the node associated with the supplied key, or nil if not found
 func (me *Tree) GetNode(key Comparable) *Node {
   if me.root == nil { return nil }
