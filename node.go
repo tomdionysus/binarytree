@@ -91,7 +91,7 @@ func (me *Node) Next(key Comparable) *Node {
     for i:=len(stack)-1; i>=0; i-- {
       if stack[i].Key.GreaterThan(key) { return stack[i] }
     }
-    return nil
+    // return nil        // This actually isn't possible.
   }
   if node.Right == nil {
     if len(stack) == 0 { return nil }

@@ -12,6 +12,8 @@ func TestNewTree(t *testing.T) {
 }
 
 func TestSet(t *testing.T) {
+  
+  // Test simple set
   tree := NewTree()
 
   tree.Set(StringKey("one"),1)
@@ -19,6 +21,14 @@ func TestSet(t *testing.T) {
 
   assert.Equal(t, tree.root.Find(StringKey("one")).Value, 1)
   assert.Equal(t, tree.root.Find(StringKey("two")).Value, 2)
+
+  // Test replacement set
+  tree = NewTree()
+
+  tree.Set(StringKey("one"),1)
+  tree.Set(StringKey("one"),2)
+
+  assert.Equal(t, tree.root.Find(StringKey("one")).Value, 2)
 }
 
 func TestGet(t *testing.T) {
@@ -72,6 +82,142 @@ func TestClear(t *testing.T) {
   assert.Equal(t, x.(int), 2)
 }
 
+func TestTreeCopy(t *testing.T) {
+  // Ensure copied tree is independent
+  tree := NewTree()
+
+  tree.Set(StringKey("one"),1)
+  tree.Set(StringKey("two"),2)
+
+  tree2 := tree.Copy()
+
+  tree2.Clear(StringKey("one"))
+
+  found, value := tree.Get(StringKey("one"))
+  assert.True(t, found)
+  assert.Equal(t, value, 1)
+
+  // If tree is empty, return new empty tree
+  tree = NewTree()
+
+  tree2 = tree.Copy()
+  tree.Set(StringKey("one"),1)
+  assert.NotEqual(t, tree, tree2)
+}
+
+func TestTreePrevious(t *testing.T) {
+  tree := NewTree()
+
+  found, key, value := tree.Previous(IntKey(1))
+  assert.False(t, found)
+  
+  tree.root = getTestTreeBalanced(1)
+
+  found, key, value = tree.Previous(IntKey(1))
+  assert.False(t, found)
+
+  found, key, value = tree.Previous(IntKey(7))
+  assert.True(t, found)
+  assert.Equal(t, key, IntKey(6))
+  assert.Equal(t, value, "six")
+}
+
+func TestTreeNext(t *testing.T) {
+  tree := NewTree()
+
+  found, key, value := tree.Next(IntKey(1))
+  assert.False(t, found)
+  
+  tree.root = getTestTreeBalanced(1)
+
+  found, key, value = tree.Next(IntKey(7))
+  assert.False(t, found)
+
+  found, key, value = tree.Next(IntKey(0))
+  assert.True(t, found)
+  assert.Equal(t, key, IntKey(1))
+  assert.Equal(t, value, "one")
+}
+
+func TestTreeFirst(t *testing.T) {
+  tree := NewTree()
+
+  key, value := tree.First()
+  assert.Nil(t, key)
+  assert.Nil(t, value)
+
+  tree.root = getTestTreeBalanced(1)
+
+  key, value =  tree.First()
+  assert.Equal(t, key,IntKey(1))
+  assert.Equal(t, value,"one")
+}
+
+func TestTreeLast(t *testing.T) {
+  tree := NewTree()
+
+  key, value := tree.Last()
+  assert.Nil(t, key)
+  assert.Nil(t, value)
+
+  tree.root = getTestTreeBalanced(1)
+
+  key, value =  tree.Last()
+  assert.Equal(t, key,IntKey(7))
+  assert.Equal(t, value,"seven")
+}
+
+func TestGetNode(t *testing.T) {
+  tree := NewTree()
+
+  node := tree.GetNode(StringKey("one"))
+  assert.Nil(t, node)
+
+  tree.Set(StringKey("one"),1)
+  tree.Set(StringKey("two"),2)
+  tree.Set(StringKey("three"),3)
+
+  node = tree.GetNode(StringKey("one"))
+  assert.NotNil(t, node)
+  assert.Equal(t, node.Value, 1)
+  node = tree.GetNode(StringKey("two"))
+  assert.NotNil(t, node)
+  assert.Equal(t, node.Value, 2)
+  node = tree.GetNode(StringKey("three"))
+  assert.NotNil(t, node)
+  assert.Equal(t, node.Value, 3)
+}
+
+func TestTreeBalance(t *testing.T) {
+  tree := NewTree()
+
+  tree.Balance()
+
+  tree = NewTree()
+
+  tree.Set(StringKey("one"),1)
+  tree.Set(StringKey("two"),2)
+  tree.Set(StringKey("three"),3)
+  tree.Set(StringKey("four"),4)
+  tree.Set(StringKey("five"),5)
+  tree.Set(StringKey("six"),6)
+
+  tree.Balance()
+
+  found, value := tree.Get(StringKey("one"))
+  assert.True(t, found); assert.Equal(t, value, 1)
+  found, value = tree.Get(StringKey("two"))
+  assert.True(t, found); assert.Equal(t, value, 2)
+  found, value = tree.Get(StringKey("three"))
+  assert.True(t, found); assert.Equal(t, value, 3)
+  found, value = tree.Get(StringKey("four"))
+  assert.True(t, found); assert.Equal(t, value, 4)
+  found, value = tree.Get(StringKey("five"))
+  assert.True(t, found); assert.Equal(t, value, 5)
+  found, value = tree.Get(StringKey("six"))
+  assert.True(t, found); assert.Equal(t, value, 6)
+}
+
 func TestWalk(t *testing.T) {
   tree := NewTree()
 
@@ -99,6 +245,14 @@ func TestWalk(t *testing.T) {
 
   assert.Equal(t, outkeys, []string{"two","one"})
   assert.Equal(t, outvalues, []int{2,1})
+
+  // Don't call if tree empty
+  tree = NewTree()
+
+  tree.Walk(func(key Comparable, value interface{}) {
+    assert.Equal(t,1,2)
+  }, true)
+
 }
 
 func TestWalkRange(t *testing.T) {
@@ -140,6 +294,13 @@ func TestWalkRange(t *testing.T) {
 
   assert.Equal(t, outkeys, []int{2,3,4,5,6})
   assert.Equal(t, outvalues, []string{"two","three","four","five","six"})
+
+  // Don't call if tree empty
+  tree = NewTree()
+
+  tree.WalkRange(func(key Comparable, value interface{}) {
+    assert.Equal(t,1,2)
+  }, IntKey(2), IntKey(6), true)
 }
 
 func TestWalkRangeBackward(t *testing.T) {
