@@ -1,5 +1,8 @@
 package binarytree
 
+import(
+  "bytes"
+)
 // Comparable is an interface for comparable types. All keys used in this implementation of
 // a binary tree must implement this interface.
 //
@@ -63,26 +66,21 @@ func (me ByteSliceKey) LessThan(other Comparable) bool {
   if len(me) > len(other.(ByteSliceKey)) { return false }
   if len(me) < len(other.(ByteSliceKey)) { return true }
 
-  ot := other.(ByteSliceKey)
-  for i, x := range me {
-    if x < ot[i] { return true }
-    if x > ot[i] { return false }
-  }
-  return false
+  return bytes.Compare(me.ValueOf().([]byte), other.ValueOf().([]byte)) < 0
 } 
 
 // Return true if this key is equal to the supplied ByteSliceKey.
 func (me ByteSliceKey) EqualTo(other Comparable) bool {
   if len(me) != len(other.(ByteSliceKey)) { return false }
-  for i, x := range me {
-    if x != other.(ByteSliceKey)[i] { return false }
-  }
-  return true
+  return bytes.Compare(me.ValueOf().([]byte), other.ValueOf().([]byte)) == 0
 } 
 
 // Return true if this key is greater than the supplied ByteSliceKey.
 func (me ByteSliceKey) GreaterThan(other Comparable) bool {
-  return !(me.EqualTo(other) || me.LessThan(other))
+  if len(me) < len(other.(ByteSliceKey)) { return false }
+  if len(me) > len(other.(ByteSliceKey)) { return true }
+
+  return bytes.Compare(me.ValueOf().([]byte), other.ValueOf().([]byte)) > 0
 } 
 
 func (me ByteSliceKey) ValueOf() interface{} {
