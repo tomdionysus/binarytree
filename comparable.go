@@ -32,6 +32,7 @@ func (me IntKey) GreaterThan(other Comparable) bool {
   return me > other.(IntKey)
 } 
 
+// Return the int value as an interface
 func (me IntKey) ValueOf() interface{} {
   return int(me)
 }
@@ -54,6 +55,7 @@ func (me StringKey) GreaterThan(other Comparable) bool {
   return me > other.(StringKey)
 } 
 
+// Return the string value as an interface
 func (me StringKey) ValueOf() interface{} {
   return string(me)
 }
@@ -83,6 +85,7 @@ func (me ByteSliceKey) GreaterThan(other Comparable) bool {
   return bytes.Compare(me.ValueOf().([]byte), other.ValueOf().([]byte)) > 0
 } 
 
+// Return the []byte value as an interface
 func (me ByteSliceKey) ValueOf() interface{} {
   return []byte(me)
 }
