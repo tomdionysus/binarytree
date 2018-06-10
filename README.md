@@ -9,3 +9,7 @@ A binary tree implementation in golang. This package is intended for use when lo
 * Ordered Maps
 * Next/Previous
 * Range Queries
+
+## License
+
+The package is open source under the MIT license. Please see the [License File](LICENSE.md) for details.
